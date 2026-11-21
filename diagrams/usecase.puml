@@ -1,0 +1,28 @@
+@startuml usecase
+title Варианты использования бота «Расписание»
+left to right direction
+
+actor "Студент" as student
+actor "Администратор" as admin
+
+rectangle "бот" {
+  usecase "Посмотреть расписание" as UC1
+  usecase "Выбрать программу и группу" as UC2
+  usecase "Выбрать день недели" as UC3
+  usecase "Выбрать неделю\n(нч/чн)" as UC4
+  usecase "Сменить день или неделю" as UC5
+}
+
+rectangle "Подготовка данных" {
+  usecase "Обновить расписание\n(Excel в JSON)" as UC6
+}
+
+student --> UC1
+student --> UC5
+admin --> UC6
+
+UC1 ..> UC2 : <<include>>
+UC1 ..> UC3 : <<include>>
+UC1 ..> UC4 : <<include>>
+UC5 ..> UC1 : <<extend>>
+@enduml
