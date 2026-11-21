@@ -1,0 +1,39 @@
+@startuml component
+title Архитектура бота
+skinparam componentStyle rectangle
+left to right direction
+
+actor "Студент" as student
+cloud "Вуз" as univ
+
+package "Telegram" {
+  component "Клиент Telegram" as client
+  component "Telegram Bot API" as api
+}
+
+package "Подготовка данных" {
+  component "schedule.xls\n(таблица с расписанием)" as xls
+  component "convert_schedule.py\n(парсер)" as conv
+  database "schedule.json" as json
+}
+
+package "schedule_bot" {
+  component "Приём событий\nи отправка ответов" as ctrl
+  component "Логика диалога" as logic
+  component "Фильтр по четности недели" as filter
+  component "Расписание" as db
+}
+
+student --> client : пишет боту,\nнажимает inline-кнопки
+client <--> api
+ctrl --> api : HTTPS + JSON, long-polling
+ctrl --> logic : событие
+logic --> filter : запрос расписания
+logic --> db : списки программ и групп
+filter --> db : занятия группы и дня
+
+univ ..> xls : передает расписание
+xls --> conv
+conv --> json
+json --> db : читается при старте бота
+@enduml
